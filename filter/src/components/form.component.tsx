@@ -1,13 +1,17 @@
 import React, {ChangeEvent, FormEvent} from "react";
 import uuid from "react-uuid";
 import {useAppDispatch, useAppSelector} from "../hooks/redux";
-import {cleanValue, editValue, setUserValue} from "../redux/service-reducer";
-import {deleteValue, filterValue, saveValue} from "../redux/list-reducer";
+import {cleanValue, setUserValue} from "../redux/service-reducer";
+import {saveValue} from "../redux/list-reducer";
+import {Filter} from "./filter.component";
+import {Item} from "./item.component";
+import {State} from "../types/data.types";
 
 export const Form: React.FC = () => {
 
     const dispatch = useAppDispatch()
     const state = useAppSelector((state) => state.list)
+    const filter = useAppSelector((state) => state.filter)
     const {name, sum} = useAppSelector((state) => state.service)
 
     const handleSubmit = (e: FormEvent) => {
@@ -22,21 +26,8 @@ export const Form: React.FC = () => {
         dispatch(setUserValue({name, sum: value}))
     }
 
-    const handleEdit = (e: any) => {
-        const {name, value} = e.target
-        dispatch(editValue({name, sum: value}))
-    }
-
-    const handleDelete = (name: string) => {
-        dispatch(deleteValue({name, sum}))
-    }
-
     const handleReset = () => {
         dispatch(cleanValue())
-    }
-
-    const handleFilter = (e: any) => {
-        dispatch(filterValue({filter: e.target.value}))
     }
 
     return (
@@ -46,15 +37,23 @@ export const Form: React.FC = () => {
                 <input type="number" name='sum' value={sum} onChange={handleChange}/>
                 <button>Save</button>
                 <button type='button' onClick={handleReset}>Cancel</button>
-                <input type="text" onChange={handleFilter} placeholder='Фильтр'/>
-            </form>
-            {state.map((item) => (
-                <div key={uuid()} style={{display: 'flex'}}>
-                    <div style={{marginRight: 30}}> {item.name} {item.sum}</div>
-                    <button name={item.name} value={item.sum} style={{marginRight: 10}} onClick={handleEdit}>Edit</button>
-                    <button onClick={() => handleDelete(item.name)}>Delete</button>
+                <Filter/>
+                <div>
+                    {!filter
+                        ? state.map((item) => (
+                            <div key={uuid()} style={{display: 'flex'}}>
+                                <Item item={item}/>
+                            </div>))
+                        : <div>
+                            {state.filter((item) => item.name.includes(filter)).map((item: State) => (
+                                <div key={uuid()} style={{display: 'flex'}}>
+                                    <Item item={item}/>
+                                </div>
+                            ))}
+                        </div>
+                    }
                 </div>
-            ))}
+            </form>
         </>
 
     )

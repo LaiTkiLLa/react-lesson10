@@ -6,7 +6,6 @@ export type Action = {
         id: string,
         name: string,
         sum: number
-        filter?: string
     }
 
 }
@@ -15,4 +14,9 @@ export type State = {
     id?: string,
     name: string,
     sum: number | string,
+}
+
+export type ListT = {
+    state: State[],
+    filter: string
 }

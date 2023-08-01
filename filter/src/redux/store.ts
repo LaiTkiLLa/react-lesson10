@@ -1,10 +1,12 @@
 import {combineReducers, configureStore} from '@reduxjs/toolkit'
 import {listReducer} from "./list-reducer";
 import {serviceReducer} from "./service-reducer";
+import {filterReducer} from "./filter-reducer";
 
 const rootReducer = combineReducers({
     list: listReducer,
     service: serviceReducer,
+    filter: filterReducer
 })
 
 export const setupStore = () => {
